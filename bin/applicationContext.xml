@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+  
+  
+	<beans xmlns="http://www.springframework.org/schema/beans"  
+	         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"  
+	         xmlns:aop="http://www.springframework.org/schema/aop"  
+	         xmlns:tx="http://www.springframework.org/schema/tx"  
+	         xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-2.0.xsd  
+	           http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-2.0.xsd  
+	           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-2.0.xsd">  
+	  
+	  
+	    <bean id="userManager" class="com.wyk.spring.manager.impl.UserManagerImpl"/>  
+	    <bean id="securityHandler" class="com.wyk.spring.proxy.SecurityHandler"/>
+	    
+	    <!--注解式 ， 启用AspectJ对Annotation的支持 -->         
+    	<!-- <aop:aspectj-autoproxy/>   -->
+	    
+	    <!-- 非注解式-->
+	    <aop:config>
+	    	<aop:aspect id="secutityAspect" ref="securityHandler">
+	    	
+	    		<!-- expression属性所指向的方法应该为实现类的，也就是com.wyk.spring.manager.impl.UserManagerImpl类下的，否则插入失败  -->
+	    		<aop:pointcut id="addAddMethod" expression="
+	    		execution(* com.wyk.spring.*.*.add*(..)) ||
+	    		execution(* com.wyk.spring.*.*.del*(..))"/>
+	    		
+	    		<aop:before method="checkSecurity" pointcut-ref="addAddMethod"/>
+	    		<aop:after method="end" pointcut-ref="addAddMethod"/>
+	    	</aop:aspect>
+	    </aop:config>
+	       
+	      
+	</beans> 
